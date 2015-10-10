@@ -13,14 +13,14 @@ window.onload = function ()
 {
   // Store the canvas and define its size. This is the bottom layer containing the game world.
   var canvas1 = document.getElementById("WumpusAdventureRoomBase");
-  canvas1.width = 640;
-  canvas1.height = 640;
+  /*canvas1.width = 640;
+  canvas1.height = 640;*/
   //Get the canvas context, and assign to a variable.
   var context1 = canvas1.getContext("2d");
   context1.fillStyle="#FFFFFF";
 
   // Get a refernece to the HTML paragraph element. The user status will be printed here.
-  var gameStatusPara = document.getElementById("gameStatusPara");
+  //var gameStatusPara = document.getElementById("gameStatusPara");
 
   // An enumeration of all of the different possible terrain types.
   var terrainTypes =
@@ -200,7 +200,7 @@ window.onload = function ()
     this.stickFigure = new Image();
     this.x = entranceX;
     this.y = entranceY;
-    this.stickFigure.src = "stickFigure.png";
+    this.stickFigure.src = "img/stickFigure.png";
 
     // The figure is rendered in the center of each block, begining with the entrance.
     this.renderEntity = function()
@@ -294,7 +294,7 @@ window.onload = function ()
             tileMap.lightUpRoom();
             playerStats.totalWins++;
             render();
-            gameStatusPara.innerHTML = "<b>You escaped with the treasure! Victory is yours!<br /><br /><i>Press the enter key to go on another Wumpus Adventure.</i><br /></b>";
+            //gameStatusPara.innerHTML = "<b>You escaped with the treasure! Victory is yours!<br /><br /><i>Press the enter key to go on another Wumpus Adventure.</i><br /></b>";
             gameStatus.currentStatus = gameStatus.VICTORY;
           }
           // If the player lands on the Wumpus or a pit then the game ends! No need to generate the messages of surrounding objects
@@ -307,7 +307,7 @@ window.onload = function ()
             render();
             gameStatus.currentStatus = gameStatus.GAMEOVER;
             statusTextGenerator.updateEntity();
-            gameStatusPara.innerHTML += "<br /><b><i>Press the enter key to go on another Wumpus Adventure.</b></i>"
+            //gameStatusPara.innerHTML += "<br /><b><i>Press the enter key to go on another Wumpus Adventure.</b></i>"
           }
       }
       // If the player has won or lost, then give them the ability to restart the game by pressing enter.
@@ -351,19 +351,19 @@ window.onload = function ()
       var spacingString = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;"
 
       // Maintains current status for the game in the paragraph element.
-      gameStatusPara.innerHTML = "<b style='color:red'>TOTAL WINS: " + playerStats.totalWins + spacingString + "TOTAL LOSES: " + playerStats.totalLosses + spacingString + "Treasure Claimed?: " + treasureString + "<br />";
+      //gameStatusPara.innerHTML = "<b style='color:red'>TOTAL WINS: " + playerStats.totalWins + spacingString + "TOTAL LOSES: " + playerStats.totalLosses + spacingString + "Treasure Claimed?: " + treasureString + "<br />";
 
       // Displays the main user messged based on the game state.
       switch (gameStatus.currentStatus)
       {
         case gameStatus.START:
-          gameStatusPara.innerHTML += "<b>Welcome to the Wumpus Adventure! You begin at the entrance.<br /><br /><i>Find the treasure, and escape through the exit. Move with the arrow keys.</i><br /></b>";
+          //gameStatusPara.innerHTML += "<b>Welcome to the Wumpus Adventure! You begin at the entrance.<br /><br /><i>Find the treasure, and escape through the exit. Move with the arrow keys.</i><br /></b>";
           break;
         case gameStatus.PLAYING:
-          gameStatusPara.innerHTML += "<b>" + tileMap.map[currentIndex].activeMessage + "</b><br />";
+          //gameStatusPara.innerHTML += "<b>" + tileMap.map[currentIndex].activeMessage + "</b><br />";
           break;
         case gameStatus.GAMEOVER:
-          gameStatusPara.innerHTML += "<b>" + tileMap.map[currentIndex].activeMessage + "</b><br />";
+          //gameStatusPara.innerHTML += "<b>" + tileMap.map[currentIndex].activeMessage + "</b><br />";
           break;
         default:
           return;
@@ -377,56 +377,56 @@ window.onload = function ()
       {
         if (tileMap.map[currentIndex-1] == wumpus || tileMap.map[currentIndex-1] == pit || tileMap.map[currentIndex-1] == bat)
         {
-          gameStatusPara.innerHTML += "- " + tileMap.map[currentIndex-1].nearbyMessage + "<br />";
+          //gameStatusPara.innerHTML += "- " + tileMap.map[currentIndex-1].nearbyMessage + "<br />";
         }
       }
       if (currentIndex % 10 != 9)
       {
         if (tileMap.map[currentIndex+1] == wumpus || tileMap.map[currentIndex+1] == pit || tileMap.map[currentIndex+1] == bat)
         {
-          gameStatusPara.innerHTML += "- " + tileMap.map[currentIndex+1].nearbyMessage + "<br />";
+          //gameStatusPara.innerHTML += "- " + tileMap.map[currentIndex+1].nearbyMessage + "<br />";
         }
       }
       if (currentIndex > 9)
       {
         if (tileMap.map[currentIndex-10] == wumpus || tileMap.map[currentIndex-10] == pit || tileMap.map[currentIndex-10] == bat)
         {
-          gameStatusPara.innerHTML += "- " + tileMap.map[currentIndex-10].nearbyMessage + "<br />";
+          //gameStatusPara.innerHTML += "- " + tileMap.map[currentIndex-10].nearbyMessage + "<br />";
         }
       }
       if (currentIndex < 90)
       {
         if (tileMap.map[currentIndex+10] == wumpus || tileMap.map[currentIndex+10] == pit || tileMap.map[currentIndex+10] == bat)
         {
-          gameStatusPara.innerHTML += "- " + tileMap.map[currentIndex+10].nearbyMessage + "<br />";
+          //gameStatusPara.innerHTML += "- " + tileMap.map[currentIndex+10].nearbyMessage + "<br />";
         }
       }
       if (currentIndex < 89 && currentIndex % 10 != 9)
       {
         if (tileMap.map[currentIndex+11] == wumpus || tileMap.map[currentIndex+11] == pit || tileMap.map[currentIndex+11] == bat)
         {
-          gameStatusPara.innerHTML += "- " + tileMap.map[currentIndex+11].nearbyMessage + "<br />";
+          //gameStatusPara.innerHTML += "- " + tileMap.map[currentIndex+11].nearbyMessage + "<br />";
         }
       }
       if (currentIndex > 10 && currentIndex % 10 != 0)
       {
         if (tileMap.map[currentIndex-11] == wumpus || tileMap.map[currentIndex-11] == pit || tileMap.map[currentIndex-11] == bat)
         {
-          gameStatusPara.innerHTML += "- " + tileMap.map[currentIndex-11].nearbyMessage + "<br />";
+          //gameStatusPara.innerHTML += "- " + tileMap.map[currentIndex-11].nearbyMessage + "<br />";
         }
       }
       if (currentIndex < 90 && currentIndex % 10 != 0)
       {
         if (tileMap.map[currentIndex+9] == wumpus || tileMap.map[currentIndex+9] == pit || tileMap.map[currentIndex+9] == bat)
         {
-          gameStatusPara.innerHTML += "- " + tileMap.map[currentIndex+9].nearbyMessage + "<br />";
+          //gameStatusPara.innerHTML += "- " + tileMap.map[currentIndex+9].nearbyMessage + "<br />";
         }
       }
       if (currentIndex > 9 && currentIndex % 10 != 9)
       {
         if (tileMap.map[currentIndex-9] == wumpus || tileMap.map[currentIndex-9] == pit || tileMap.map[currentIndex-9] == bat)
         {
-          gameStatusPara.innerHTML += "- " + tileMap.map[currentIndex-9].nearbyMessage + "<br />";
+          //gameStatusPara.innerHTML += "- " + tileMap.map[currentIndex-9].nearbyMessage + "<br />";
         }
       }
     }
