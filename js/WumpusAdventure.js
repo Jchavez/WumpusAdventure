@@ -669,7 +669,7 @@ function Run(){
     }
     
 
-    //toma la decision si atacar o morir
+    //toma la decision si atacar o morir (Wumpus)
     function makeDecition(current){
          var filaPista = parseInt(current/alto);
     		var columnaPista =  parseInt(current - parseInt(alto*(filaPista)));
@@ -709,6 +709,36 @@ function Run(){
         return position;
     }
     
+    //Verifica si tiene en horizontal o vertical al oponente
+    function checkForOponent(){
+        var filaPista = parseInt(current/alto);
+		var columnaPista =  parseInt(current - parseInt(alto*(filaPista)));
+		var position = -1;       
+   
+        
+        if(filaPista>0){
+			var row = (filaPista-1) * alto;
+			position = row + columnaPista;            
+		}
+				
+		if(columnaPista > 0 ){
+		      position = (filaPista * alto) + columnaPista -1;
+		}
+		
+		if(columnaPista < ancho-1){
+			position = (filaPista * alto) + columnaPista +1;
+            
+		}
+		
+		if(filaPista<alto-1){
+			var row = (filaPista+1) * alto;
+			position = row + columnaPista;            
+		}
+            
+    }
+    
+    
+    //Decide si lanza flecha
     function decideToShot(){
         var position = -1;       
        
