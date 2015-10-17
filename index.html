@@ -24,11 +24,54 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-2">
+				<h3 style="color:white;">Información</h3>
+				<div class="panel">
+					<label>Aventurero 1:</label>
+					<label>Tiene Vida? <span id="vida1">Si</span></label>
+					<label>Tiene Premio? <span id="premio1">No</span></label>
+					<label>Tiene Flecha? <span id="flecha1">Si</span></label>
+					<br/>
+					<br/>
+					<br/>
+					<label>Aventurero 2:</label>
+					<label>Tiene Vida? <span id="vida2">Si</span></label>
+					<label>Tiene Premio? <span id="premio2">No</span></label>
+					<label>Tiene Flecha? <span id="flecha2">Si</span></label>
+				</div>
 			</div>
 			<div class="col-md-8">
 				<canvas id="WumpusAdventureRoomBase" class="img-responsive"></canvas>
 			</div>
 			<div class="col-md-2">
+				<label>
+					Filas:
+					<input id="finput" type="number">
+				</label>
+				<label>
+					Columnas:
+					<input id="coinput" type="number">
+				</label>
+				<label>
+					Posicion Tesoro:
+					<input id="teinput" type="number">
+				</label>
+				<label>
+					Posicion Aventurero 1:
+					<input id="a1input" type="number">
+				</label>
+				<label>
+					Posicion Aventurero 2:
+					<input id="a2input" type="number">
+				</label>
+				<label>
+					Posicion Wumpus:
+					<input id="wuinput" type="number">
+				</label>
+				<label>
+					Posicion Abismos:
+					<input id="abinput" type="text">
+				</label>
+				<input type="button" id="run" value="Iniciar">
 			</div>
 		</div>
 	</div>

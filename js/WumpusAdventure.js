@@ -4,8 +4,8 @@ window.onload = function ()
 {
   // Store the canvas and define its size. This is the bottom layer containing the game world.
   var canvas1 = document.getElementById("WumpusAdventureRoomBase");
-  canvas1.width = 750;
-  canvas1.height = 750;
+  canvas1.width = 1024;
+  canvas1.height = 1024;
   //Get the canvas context, and assign to a variable.
   var context1 = canvas1.getContext("2d");
   context1.fillStyle="#FFCCFF";
@@ -51,20 +51,21 @@ window.onload = function ()
     var posWumpus_Y;
     var posGold_X;
     var posGold_Y;
+    var posicionMalo;
     
     
     //Se define el terreno
     
     var aventurero = new Recorrido("#F2F2F2",OBJETOS.AVENTURERO);
     var oponente = new Recorrido("#F2F2F2",OBJETOS.OPONENTE);
-    var tesoro = new Recorrido("#FFBF00",OBJETOS.TESORO);
+    var tesoro = new Recorrido("#F2F2F2",OBJETOS.TESORO);
     var wumpus = new Recorrido("#F2F2F2",OBJETOS.WUMPUS);
     var entrada_1 = new Recorrido("#58D3F7",OBJETOS.ENTRADA_1);
     var entrada_2 = new Recorrido("#2E64FE",OBJETOS.ENTRADA_2);
     var vacio = new Recorrido("#F2F2F2",OBJETOS.VACIO);
     var oscuro = new Recorrido("#000000",OBJETOS.OSCURO);
 	var viento = new Recorrido("#ffffff",OBJETOS.VIENTO);
-	var olor = new Recorrido("#F2F2F2",OBJETOS.OLOR);
+	var olor = new Recorrido("#F2CC33",OBJETOS.OLOR);
 	var brillo = new Recorrido("#F2F2F2", OBJETOS.BRILLO);
     
     //color: especifica el color que va a tener de fondo
@@ -84,7 +85,7 @@ window.onload = function ()
     var ancho;
     
 
-    var mapaTablero = new MapaTablero(10, 10,0, 18,26,50);
+    var mapaTablero = new MapaTablero(15, 15,20, 50,120,100);
     
     
     
@@ -93,6 +94,7 @@ window.onload = function ()
         this.mapa = new Array(filas*columnas);
         this.mapaAncho = columnas * 64;
         this.mapaAlto = filas * 64;
+        posicionMalo = malo;
         
         alto = filas;
         ancho = columnas;
@@ -259,6 +261,8 @@ window.onload = function ()
         this.y = posAvent1_Y;
         if(stick.estado.tieneVida)
 		  context1.drawImage(this.stickFigure, this.x, this.y);
+          
+          updateStatusText(1,stick.estado.tieneVida,stick.estado.tieneTesoro,stick.estado.tieneFlecha);
     };
   }
 
@@ -275,6 +279,8 @@ window.onload = function ()
 			this.y = posAvent2_Y;
             if(stick2.estado.tieneVida)
                 context1.drawImage(this.stickFigure, this.x , this.y);
+                
+            updateStatusText(2,stick2.estado.tieneVida,stick2.estado.tieneTesoro,stick2.estado.tieneFlecha);
         };
     }
     
@@ -289,8 +295,12 @@ window.onload = function ()
         {
 			this.x = posWumpus_X;
 			this.y = posWumpus_Y;
-            if(WumpuStick.estado.tieneVida)
+            if(WumpuStick.estado.tieneVida){
                 context1.drawImage(this.stickFigure, this.x , this.y);
+
+                colocarPistas(mapaTablero.mapa, posicionMalo, olor, alto, ancho,false);
+            }
+                
         };
     }
     
@@ -306,6 +316,30 @@ window.onload = function ()
 			this.y = posGold_Y;
             if(treasureStick.estado.tieneTesoro)
                 context1.drawImage(this.stickFigure, this.x , this.y);
+        };
+    }
+    
+    function figureEdor(){
+        this.stickFigure = new Image();
+		this.stickFigure.src = "img/Humo.gif";
+        
+        this.renderEntity = function()
+        {
+            for(var i=0; i<ancho*alto; i++){
+                if(mapaTablero.mapa[i] == olor){
+                    var y = Math.floor(i/alto)*64;
+                    var x = 0;
+                    if(i % ancho > 0){
+                        x = (i %ancho)*64;
+                    }
+                    else{
+                        x = 0;
+                    }                  
+        			
+                    //context1.drawImage(this.stickFigure, x , y);   
+                }
+                 
+            }            
         };
     }
     
@@ -325,6 +359,9 @@ window.onload = function ()
                    this.oldIndex = currentIndex;
                    this.validMove = false;
                    var intentsCount = 0;
+                   var valueOnNext;
+                   
+                   
                    while(!validMove){
                        currentIndex = makeMove(this.oldIndex,mapaTablero.caminoAvent1[mapaTablero.caminoAvent1.length -1]);
                         if(mapaTablero.caminoAvent1.indexOf(currentIndex) < 0){
@@ -335,8 +372,7 @@ window.onload = function ()
                             this.validMove = true;
                         }
                         intentsCount++;
-                        sleep(5);         
-                        
+                        sleep(5);                        
                    }
 				   
                    
@@ -373,11 +409,11 @@ window.onload = function ()
                        afectaBrilloTesoro(false,currentIndex,alto,ancho);
                    }
 				   
-				           render();
+				   render();
                    stick.renderEntity();
                    treasureStick.renderEntity();
                    WumpuStick.renderEntity();
-				   
+				   humoStick.renderEntity();
                    window.requestAnimationFrame(jugador_1_Start);                   
             }
         },200);
@@ -443,7 +479,7 @@ window.onload = function ()
                    stick2.renderEntity();
                    treasureStick.renderEntity();
                    WumpuStick.renderEntity();
-				   
+				   humoStick.renderEntity();
 				   
                    window.requestAnimationFrame(jugador_2_Start);                   
             }
@@ -500,7 +536,27 @@ window.onload = function ()
     }
     
 
+    //toma la decision si atacar o morir
+    function makeDecition(){
+        var d = new Date();
+        var n = d.getTime();
+        var random =  n% d.getDate();        
+        random = (random+9876524) % 16;
+        
+        if(random<=7)
+            return 0;
+        else
+            return 1;
+    }
     
+    function updateStatusText(numero,vida,premio,flecha){
+        var txtVida = (vida)?"Si":"No" ;
+        var txtPremio =(premio)?"Si":"No" ;
+        var txtFlecha =(flecha)?"Si":"No" ;
+        $("#vida"+numero).text(txtVida);
+        $("#premio"+numero).text(txtPremio);
+        $("#flecha"+numero).text(txtFlecha);
+    }
 
     // Consolidates the render functions. Continously renders the tileMap, the stickFigure(player).
     function render()
@@ -509,17 +565,19 @@ window.onload = function ()
     		mapaTablero.dibujaObjeto();
     		stick.renderEntity();
     		stick2.renderEntity();
-        treasureStick.renderEntity();
-        WumpuStick.renderEntity();
+            treasureStick.renderEntity();
+            WumpuStick.renderEntity();
+            humoStick.renderEntity();
     }
 
 
-    // Create the map, the player, and the status text. Then begin gameplay (also triggers rendering).
     mapaTablero.crearMapa();
     var stick = new stickFigurePlayer1();
     var stick2= new stickFigurePlayer2();
     var WumpuStick = new stickFigureWumpus();
     var treasureStick = new figureTreasure();
+    var humoStick = new figureEdor();
+    
     render();    
     jugador_1_Start();
     jugador_2_Start();
