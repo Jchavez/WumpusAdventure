@@ -1,15 +1,43 @@
 
+var mapaTablero;
 
-window.onload = function ()
-{
+$(document).ready(function(){
+       $("#run").on("click",function(){
+            var f = $("#finput").val();
+            var c = $("#coinput").val();
+            var t= $("#teinput").val();
+            var p1 =$("#a1input").val();
+            var p2 =  $("#a2input").val();
+            var m = $("#wuinput").val();
+            var ab = $("#abinput").val();
+            mapaTablero = new MapaTablero(f, c,p1, p2,t,m);
+            Run();
+       });
+});
+
+
+var stick = new stickFigurePlayer1();
+    var stick2= new stickFigurePlayer2();
+    var WumpuStick = new stickFigureWumpus();
+    var treasureStick = new figureTreasure();
+    var humoStick = new figureEdor();
+    
+function Run(){
+     stick = new stickFigurePlayer1();
+     stick2= new stickFigurePlayer2();
+     WumpuStick = new stickFigureWumpus();
+     treasureStick = new figureTreasure();
+    humoStick = new figureEdor();
+    mapaTablero.crearMapa();
+    render();
+ 
+    jugador_1_Start();
+    jugador_2_Start();
+}
+
+//window.onload = function ()
+//{
   // Store the canvas and define its size. This is the bottom layer containing the game world.
-  var canvas1 = document.getElementById("WumpusAdventureRoomBase");
-  canvas1.width = 1024;
-  canvas1.height = 1024;
-  //Get the canvas context, and assign to a variable.
-  var context1 = canvas1.getContext("2d");
-  context1.fillStyle="#FFCCFF";
-
 
     
     var OBJETOS={
@@ -85,7 +113,7 @@ window.onload = function ()
     var ancho;
     
 
-    var mapaTablero = new MapaTablero(15, 15,20, 50,120,100);
+    
     
     
     
@@ -185,10 +213,16 @@ window.onload = function ()
                         
                         var xDrawPoint = x * 64;
                         var yDrawPoint = y * 64;                        
-                        
                        
-                        context1.fillStyle = recorridoActual.color;
-                        context1.fillRect(xDrawPoint, yDrawPoint, 64, 64);
+                        
+                       $('canvas').drawRect({
+                          fillStyle: recorridoActual.color,
+                          x: xDrawPoint, y: yDrawPoint,
+                          width: 64,
+                          height: 64
+                        });
+                        //context1.fillStyle = recorridoActual.color;
+                        //context1.fillRect(xDrawPoint, yDrawPoint, 64, 64);
                         
                     }
                 }
@@ -260,7 +294,11 @@ window.onload = function ()
         this.x = posAvent1_X;
         this.y = posAvent1_Y;
         if(stick.estado.tieneVida)
-		  context1.drawImage(this.stickFigure, this.x, this.y);
+        $('canvas').drawImage({
+          source: this.stickFigure.src,
+          x: this.x, y: this.y
+        });
+		  //context1.drawImage(this.stickFigure, this.x, this.y);
           
           updateStatusText(1,stick.estado.tieneVida,stick.estado.tieneTesoro,stick.estado.tieneFlecha);
     };
@@ -278,7 +316,11 @@ window.onload = function ()
 			this.x = posAvent2_X;
 			this.y = posAvent2_Y;
             if(stick2.estado.tieneVida)
-                context1.drawImage(this.stickFigure, this.x , this.y);
+            $('canvas').drawImage({
+              source: this.stickFigure.src,
+              x: this.x, y: this.y
+            });
+                //context1.drawImage(this.stickFigure, this.x , this.y);
                 
             updateStatusText(2,stick2.estado.tieneVida,stick2.estado.tieneTesoro,stick2.estado.tieneFlecha);
         };
@@ -296,7 +338,11 @@ window.onload = function ()
 			this.x = posWumpus_X;
 			this.y = posWumpus_Y;
             if(WumpuStick.estado.tieneVida){
-                context1.drawImage(this.stickFigure, this.x , this.y);
+                $('canvas').drawImage({
+                  source: this.stickFigure.src,
+                  x: this.x, y: this.y
+                });
+                //context1.drawImage(this.stickFigure, this.x , this.y);
 
                 colocarPistas(mapaTablero.mapa, posicionMalo, olor, alto, ancho,false);
             }
@@ -315,7 +361,11 @@ window.onload = function ()
 			this.x = posGold_X;
 			this.y = posGold_Y;
             if(treasureStick.estado.tieneTesoro)
-                context1.drawImage(this.stickFigure, this.x , this.y);
+            $('canvas').drawImage({
+              source: this.stickFigure.src,
+              x: this.x, y: this.y
+            });
+                //context1.drawImage(this.stickFigure, this.x , this.y);
         };
     }
     
@@ -334,8 +384,7 @@ window.onload = function ()
                     }
                     else{
                         x = 0;
-                    }                  
-        			
+                    }        			
                     //context1.drawImage(this.stickFigure, x , y);   
                 }
                  
@@ -561,7 +610,8 @@ window.onload = function ()
     // Consolidates the render functions. Continously renders the tileMap, the stickFigure(player).
     function render()
     {
-    		context1.clearRect(0,0,ancho,alto);
+        $('canvas').clearCanvas();
+    		//context1.clearRect(0,0,ancho,alto);
     		mapaTablero.dibujaObjeto();
     		stick.renderEntity();
     		stick2.renderEntity();
@@ -569,17 +619,5 @@ window.onload = function ()
             WumpuStick.renderEntity();
             humoStick.renderEntity();
     }
-
-
-    mapaTablero.crearMapa();
-    var stick = new stickFigurePlayer1();
-    var stick2= new stickFigurePlayer2();
-    var WumpuStick = new stickFigureWumpus();
-    var treasureStick = new figureTreasure();
-    var humoStick = new figureEdor();
-    
-    render();    
-    jugador_1_Start();
-    jugador_2_Start();
-
-};
+  
+//};
