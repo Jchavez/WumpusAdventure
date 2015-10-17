@@ -360,6 +360,14 @@ function Run(){
                 //context1.drawImage(this.stickFigure, this.x , this.y);
 
                 colocarPistas(mapaTablero.mapa, posicionMalo, olor, alto, ancho,false);
+            }else{
+                for(var i=0;i<ancho*alto; i++){
+                    if(mapaTablero.mapa[i] == wumpus){
+                        mapaTablero.mapa[i] = vacio;
+                        break;
+                    }    
+                }
+                
             }
                 
         };
@@ -488,9 +496,22 @@ function Run(){
                        stick.estado.tieneTesoro = true;      
                        treasureStick.estado.tieneTesoro = false;                 
                    }
+                   else if(mapaTablero.mapa[currentIndex]==olor){
+                       
+                       var posToShot = makeDecition(currentIndex);
+                       if(mapaTablero.mapa[posToShot] == wumpus){
+                           if(stick.estado.tieneFlecha && decideToShot()){
+                               WumpuStick.estado.tieneVida = false;
+                               stick.estado.tieneFlecha = false;
+                           }
+                       }
+                   }
                    else{
                        mapaTablero.mapa[currentIndex] = aventurero;
                    }
+
+                   
+
 
                    posAvent1_Y = Math.floor(currentIndex/alto) * 64;
                    
@@ -535,7 +556,7 @@ function Run(){
                             this.validMove = true;
                         }
                         intentsCount++;
-                        sleep(5);         
+                        sleep(5);
                         
                    }
 				   
@@ -553,14 +574,27 @@ function Run(){
 				   }
                    else if(mapaTablero.mapa[currentIndex2] == oscuro){
                        stick2.estado.tieneVida = false;
-                   }
+                   }                   
                    else if(mapaTablero.mapa[currentIndex2] == tesoro){
                        stick2.estado.tieneTesoro = true;
                        treasureStick.estado.tieneTesoro = false;                  
                    }
+                   else if(mapaTablero.mapa[currentIndex2]==olor){
+                      
+                       var posToShot = makeDecition(currentIndex2);
+                       if(mapaTablero.mapa[posToShot] == wumpus){
+                           if(stick2.estado.tieneFlecha && decideToShot()){
+                               WumpuStick.estado.tieneVida = false;
+                               stick2.estado.tieneFlecha = false;
+                           }
+                       }
+                   }
                    else{
                        mapaTablero.mapa[currentIndex2] = oponente;
                    }
+                   
+                   
+                   
 
                    posAvent2_Y = Math.floor(currentIndex2/alto) * 64;
                    
@@ -638,17 +672,63 @@ function Run(){
     
 
     //toma la decision si atacar o morir
-    function makeDecition(){
-        var d = new Date();
-        var n = d.getTime();
-        var random =  n% d.getDate();        
-        random = (random+9876524) % 16;
+    function makeDecition(current){
+         var filaPista = parseInt(current/alto);
+    		var columnaPista =  parseInt(current - parseInt(alto*(filaPista)));
+    		var position = -1;       
+       
+            
+            var d = new Date();
+            var n = d.getTime();
+            var random =  n% d.getDate();
+            random = random * 12318193713;
+            random = random % 16*9887675543;
+            random = (random+770099) %16;
+
+            
+            if(filaPista>0 && random <= 3){
+    			var row = (filaPista-1) * alto;
+    			position = row + columnaPista;            
+    		}
+    				
+    		if(columnaPista > 0 && (random>=12 && random<=15)){
+    		      position = (filaPista * alto) + columnaPista -1;
+    		}
+    		
+    		if(columnaPista < ancho-1 && (random>=4 && random<=7)){
+    			position = (filaPista * alto) + columnaPista +1;
+                
+    		}
+    		
+    		if(filaPista<alto-1 && (random>=8 && random<=11) ){
+    			var row = (filaPista+1) * alto;
+    			position = row + columnaPista;            
+    		}
+
+            
+       
         
-        if(random<=7)
-            return 0;
-        else
-            return 1;
+        return position;
     }
+    
+    function decideToShot(){
+        var position = -1;       
+       
+            
+            var d = new Date();
+            var n = d.getTime();
+            var random =  n% d.getDate();
+            random = random * 12318193713;
+            random = random % 16*9887675543;
+            random = (random+770099) %16;
+            
+            if(random <= 7){
+                return true;
+            }
+            else
+                return false;
+    }
+    
     
     function updateStatusText(numero,vida,premio,flecha){
         var txtVida = (vida)?"Si":"No" ;
