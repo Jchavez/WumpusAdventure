@@ -508,9 +508,7 @@ function Run(){
                    }
                    else{
                        mapaTablero.mapa[currentIndex] = aventurero;
-                   }
-
-                   
+                   }                  
 
 
                    posAvent1_Y = Math.floor(currentIndex/alto) * 64;
