@@ -2,6 +2,8 @@
 var mapaTablero;
 
 $(document).ready(function(){
+    $.jCanvas.defaults.fromCenter = false;
+
        $("#run").on("click",function(){
             var f = $("#finput").val();
             var c = $("#coinput").val();
@@ -10,7 +12,13 @@ $(document).ready(function(){
             var p2 =  $("#a2input").val();
             var m = $("#wuinput").val();
             var ab = $("#abinput").val();
-            mapaTablero = new MapaTablero(f, c,p1, p2,t,m);
+
+            var array = [];
+            if(ab.length>0){
+                array = ab.split(",");
+               
+            }
+            mapaTablero = new MapaTablero(f, c,p1, p2,t,m,array);
             Run();
        });
 });
@@ -118,7 +126,7 @@ function Run(){
     
     
     //Se define las caracteristicas del mapa
-    function MapaTablero(filas,columnas, avent1, avent2,premio,malo){
+    function MapaTablero(filas,columnas, avent1, avent2,premio,malo,abismos){
         this.mapa = new Array(filas*columnas);
         this.mapaAncho = columnas * 64;
         this.mapaAlto = filas * 64;
@@ -138,7 +146,12 @@ function Run(){
             //se coloca el mapa en blanco
             for(var i=0; i< this.mapa.length; i++){
                 this.mapa[i] = vacio;
-            }            
+            }
+            
+            for(var i=0;i<abismos.length;i++){
+                this.mapa[abismos[i]]= oscuro;
+                
+            }
 									
 			
             this.mapa[avent1] = aventurero;
