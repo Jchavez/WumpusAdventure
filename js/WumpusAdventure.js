@@ -29,6 +29,7 @@ var stick = new stickFigurePlayer1();
     var WumpuStick = new stickFigureWumpus();
     var treasureStick = new figureTreasure();
     var humoStick = new figureEdor();
+    var agujero = new figureAgujero();
     
 function Run(){
      stick = new stickFigurePlayer1();
@@ -36,6 +37,7 @@ function Run(){
      WumpuStick = new stickFigureWumpus();
      treasureStick = new figureTreasure();
     humoStick = new figureEdor();
+    agujero = new figureAgujero();
     mapaTablero.crearMapa();
     render();
  
@@ -99,9 +101,9 @@ function Run(){
     var entrada_1 = new Recorrido("#58D3F7",OBJETOS.ENTRADA_1);
     var entrada_2 = new Recorrido("#2E64FE",OBJETOS.ENTRADA_2);
     var vacio = new Recorrido("#F2F2F2",OBJETOS.VACIO);
-    var oscuro = new Recorrido("#000000",OBJETOS.OSCURO);
+    var oscuro = new Recorrido("#F2F2F2",OBJETOS.OSCURO);
 	var viento = new Recorrido("#ffffff",OBJETOS.VIENTO);
-	var olor = new Recorrido("#F2CC33",OBJETOS.OLOR);
+	var olor = new Recorrido("#F2F2F2",OBJETOS.OLOR);
 	var brillo = new Recorrido("#F2F2F2", OBJETOS.BRILLO);
     
     //color: especifica el color que va a tener de fondo
@@ -397,11 +399,41 @@ function Run(){
                     }
                     else{
                         x = 0;
-                    }        			
-                    //context1.drawImage(this.stickFigure, x , y);   
+                    }        			 
                 }
                  
             }            
+        };
+    }
+    
+    
+    function figureAgujero(){
+        this.stickFigure = new Image();
+		this.stickFigure.src = "img/agujero.png";
+       
+        this.renderEntity = function()
+        {
+            
+            for(var i=0; i<ancho*alto; i++){
+                if(mapaTablero.mapa[i] == oscuro){
+                    
+                    var y = Math.floor(i/alto)*64;
+                    var x = 0;
+                    if(i % ancho > 0){
+                        x = (i %ancho)*64;
+                    }
+                    else{
+                        x = 0;
+                    }
+                    $('canvas').drawImage({
+                      source: this.stickFigure.src,
+                      x: x, y: y
+                    });
+                            			 
+                }
+                 
+            }
+            
         };
     }
     
@@ -449,6 +481,9 @@ function Run(){
 				   if(mapaTablero.mapa[currentIndex] == wumpus){
 					   stick.estado.tieneVida = false;
 				   }
+                   else if(mapaTablero.mapa[currentIndex] == oscuro){
+                       stick.estado.tieneVida = false;
+                   }
                    else if(mapaTablero.mapa[currentIndex] == tesoro){
                        stick.estado.tieneTesoro = true;      
                        treasureStick.estado.tieneTesoro = false;                 
@@ -476,6 +511,7 @@ function Run(){
                    treasureStick.renderEntity();
                    WumpuStick.renderEntity();
 				   humoStick.renderEntity();
+                   agujero.renderEntity();
                    window.requestAnimationFrame(jugador_1_Start);                   
             }
         },200);
@@ -515,6 +551,9 @@ function Run(){
 				   if(mapaTablero.mapa[currentIndex2] == wumpus){
 					   stick2.estado.tieneVida = false;
 				   }
+                   else if(mapaTablero.mapa[currentIndex2] == oscuro){
+                       stick2.estado.tieneVida = false;
+                   }
                    else if(mapaTablero.mapa[currentIndex2] == tesoro){
                        stick2.estado.tieneTesoro = true;
                        treasureStick.estado.tieneTesoro = false;                  
@@ -542,7 +581,7 @@ function Run(){
                    treasureStick.renderEntity();
                    WumpuStick.renderEntity();
 				   humoStick.renderEntity();
-				   
+				   agujero.renderEntity();
                    window.requestAnimationFrame(jugador_2_Start);                   
             }
         },200);
@@ -631,6 +670,7 @@ function Run(){
             treasureStick.renderEntity();
             WumpuStick.renderEntity();
             humoStick.renderEntity();
+            agujero.renderEntity();
     }
   
 //};
