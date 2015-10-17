@@ -47,21 +47,25 @@ window.onload = function ()
     var posAvent1_Y;
     var posAvent2_X;
     var posAvent2_Y;
+    var posWumpus_X;
+    var posWumpus_Y;
+    var posGold_X;
+    var posGold_Y;
     
     
     //Se define el terreno
     
-    var aventurero = new Recorrido("#58D3F7",OBJETOS.AVENTURERO);
-    var oponente = new Recorrido("#2E64FE",OBJETOS.OPONENTE);
+    var aventurero = new Recorrido("#F2F2F2",OBJETOS.AVENTURERO);
+    var oponente = new Recorrido("#F2F2F2",OBJETOS.OPONENTE);
     var tesoro = new Recorrido("#FFBF00",OBJETOS.TESORO);
-    var wumpus = new Recorrido("#FF0000",OBJETOS.WUMPUS);
+    var wumpus = new Recorrido("#F2F2F2",OBJETOS.WUMPUS);
     var entrada_1 = new Recorrido("#58D3F7",OBJETOS.ENTRADA_1);
     var entrada_2 = new Recorrido("#2E64FE",OBJETOS.ENTRADA_2);
     var vacio = new Recorrido("#F2F2F2",OBJETOS.VACIO);
     var oscuro = new Recorrido("#000000",OBJETOS.OSCURO);
 	var viento = new Recorrido("#ffffff",OBJETOS.VIENTO);
-	var olor = new Recorrido("#5E610B",OBJETOS.OLOR);
-	var brillo = new Recorrido("#F5DA81", OBJETOS.BRILLO);
+	var olor = new Recorrido("#F2F2F2",OBJETOS.OLOR);
+	var brillo = new Recorrido("#F2F2F2", OBJETOS.BRILLO);
     
     //color: especifica el color que va a tener de fondo
     //miPosicion: indica que tipo de objeto utilizara del Enum de Objeto
@@ -115,8 +119,8 @@ window.onload = function ()
             this.mapa[malo] = wumpus;
 			
 						
-			colocarPistas(this.mapa, malo, olor, filas, columnas,false);
-			colocarPistas(this.mapa, premio, brillo, filas, columnas,false);
+      			colocarPistas(this.mapa, malo, olor, filas, columnas,false);
+      			colocarPistas(this.mapa, premio, brillo, filas, columnas,false);
 
 
             //Coloca la posicion de entrada en los caminos de cada aventurero
@@ -146,6 +150,24 @@ window.onload = function ()
             }
             else{
                 posAvent2_X = 0;
+            }
+            
+            
+            posWumpus_Y = Math.floor(malo/filas)*64;
+            if(malo % columnas > 0){
+                posWumpus_X = (malo %columnas)*64;
+            }
+            else{
+                posWumpus_X = 0;
+            }
+            
+            
+            posGold_Y = Math.floor(premio/filas)*64;
+            if(premio % columnas > 0){
+                posGold_X = (premio %columnas)*64;
+            }
+            else{
+                posGold_X = 0;
             }
             
             
@@ -228,7 +250,7 @@ window.onload = function ()
   function stickFigurePlayer1()
   {      
     this.stickFigure = new Image();
-    this.stickFigure.src = "img/stickFigure.png";
+    this.stickFigure.src = "img/AVENTURERO1.png";
 	this.estado = new EstadoAventurero(true,true,false);
     // The figure is rendered in the center of each block, begining with the entrance.
     this.renderEntity = function()
@@ -244,7 +266,7 @@ window.onload = function ()
     function stickFigurePlayer2()
     {
         this.stickFigure = new Image();
-		this.stickFigure.src = "img/stickFigure.png";
+		  this.stickFigure.src = "img/AVENTURERO2.png";
         this.estado = new EstadoAventurero(true,true,false);     
         // The figure is rendered in the center of each block, begining with the entrance.
         this.renderEntity = function()
@@ -252,6 +274,37 @@ window.onload = function ()
 			this.x = posAvent2_X;
 			this.y = posAvent2_Y;
             if(stick2.estado.tieneVida)
+                context1.drawImage(this.stickFigure, this.x , this.y);
+        };
+    }
+    
+    
+    function stickFigureWumpus()
+    {
+        this.stickFigure = new Image();
+		  this.stickFigure.src = "img/WUMPUS.png";
+        this.estado = new EstadoAventurero(true,false,false);     
+        // The figure is rendered in the center of each block, begining with the entrance.
+        this.renderEntity = function()
+        {
+			this.x = posWumpus_X;
+			this.y = posWumpus_Y;
+            if(WumpuStick.estado.tieneVida)
+                context1.drawImage(this.stickFigure, this.x , this.y);
+        };
+    }
+    
+    function figureTreasure()
+    {
+        this.stickFigure = new Image();
+		  this.stickFigure.src = "img/GOLD.png";
+        this.estado = new EstadoAventurero(false,false,true);     
+        // The figure is rendered in the center of each block, begining with the entrance.
+        this.renderEntity = function()
+        {
+			this.x = posGold_X;
+			this.y = posGold_Y;
+            if(treasureStick.estado.tieneTesoro)
                 context1.drawImage(this.stickFigure, this.x , this.y);
         };
     }
@@ -278,11 +331,11 @@ window.onload = function ()
                             this.validMove = true;
                         }
                         if(intentsCount >= 5){
-                            console.log("Limit Rechead!");
+                            console.log("Limit Reached!");
                             this.validMove = true;
                         }
                         intentsCount++;
-                        sleep(300);         
+                        sleep(5);         
                         
                    }
 				   
@@ -299,7 +352,8 @@ window.onload = function ()
 					   stick.estado.tieneVida = false;
 				   }
                    else if(mapaTablero.mapa[currentIndex] == tesoro){
-                       stick.estado.tieneTesoro = true;                       
+                       stick.estado.tieneTesoro = true;      
+                       treasureStick.estado.tieneTesoro = false;                 
                    }
                    else{
                        mapaTablero.mapa[currentIndex] = aventurero;
@@ -319,8 +373,10 @@ window.onload = function ()
                        afectaBrilloTesoro(false,currentIndex,alto,ancho);
                    }
 				   
-				   render();
+				           render();
                    stick.renderEntity();
+                   treasureStick.renderEntity();
+                   WumpuStick.renderEntity();
 				   
                    window.requestAnimationFrame(jugador_1_Start);                   
             }
@@ -341,11 +397,11 @@ window.onload = function ()
                             this.validMove = true;
                         }
                         if(intentsCount >= 5){
-                            console.log("Limit Rechead!");
+                            console.log("Limit Reached!");
                             this.validMove = true;
                         }
                         intentsCount++;
-                        sleep(300);         
+                        sleep(5);         
                         
                    }
 				   
@@ -362,7 +418,8 @@ window.onload = function ()
 					   stick2.estado.tieneVida = false;
 				   }
                    else if(mapaTablero.mapa[currentIndex2] == tesoro){
-                       stick2.estado.tieneTesoro = true;                       
+                       stick2.estado.tieneTesoro = true;
+                       treasureStick.estado.tieneTesoro = false;                  
                    }
                    else{
                        mapaTablero.mapa[currentIndex2] = oponente;
@@ -382,8 +439,11 @@ window.onload = function ()
                        afectaBrilloTesoro(false,currentIndex2,alto,ancho);
                    }
 				   
-				   render();
+				           render();
                    stick2.renderEntity();
+                   treasureStick.renderEntity();
+                   WumpuStick.renderEntity();
+				   
 				   
                    window.requestAnimationFrame(jugador_2_Start);                   
             }
@@ -396,8 +456,8 @@ window.onload = function ()
     //obtiene la posicion a la que se debe colocar el aventurero
     function makeMove(current,previousRandom){
         var filaPista = parseInt(current/alto);
-		var columnaPista =  parseInt(current - parseInt(alto*(filaPista)));
-		var position = -1;
+    		var columnaPista =  parseInt(current - parseInt(alto*(filaPista)));
+    		var position = -1;
         
         var validValue = false;
         
@@ -434,8 +494,7 @@ window.onload = function ()
                 validValue = true;
             }
             
-        }
-		
+        }		
         
         return position;
     }
@@ -446,10 +505,12 @@ window.onload = function ()
     // Consolidates the render functions. Continously renders the tileMap, the stickFigure(player).
     function render()
     {
-		context1.clearRect(0,0,ancho,alto);
-		mapaTablero.dibujaObjeto();
-		stick.renderEntity();
-		stick2.renderEntity();
+    		context1.clearRect(0,0,ancho,alto);
+    		mapaTablero.dibujaObjeto();
+    		stick.renderEntity();
+    		stick2.renderEntity();
+        treasureStick.renderEntity();
+        WumpuStick.renderEntity();
     }
 
 
@@ -457,6 +518,8 @@ window.onload = function ()
     mapaTablero.crearMapa();
     var stick = new stickFigurePlayer1();
     var stick2= new stickFigurePlayer2();
+    var WumpuStick = new stickFigureWumpus();
+    var treasureStick = new figureTreasure();
     render();    
     jugador_1_Start();
     jugador_2_Start();
