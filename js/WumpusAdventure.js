@@ -94,17 +94,17 @@ function Run(){
     
     //Se define el terreno
     
-    var aventurero = new Recorrido("#F2F2F2",OBJETOS.AVENTURERO);
-    var oponente = new Recorrido("#F2F2F2",OBJETOS.OPONENTE);
-    var tesoro = new Recorrido("#F2F2F2",OBJETOS.TESORO);
-    var wumpus = new Recorrido("#F2F2F2",OBJETOS.WUMPUS);
+    var aventurero = new Recorrido("#FFFFFF",OBJETOS.AVENTURERO);
+    var oponente = new Recorrido("#FFFFFF",OBJETOS.OPONENTE);
+    var tesoro = new Recorrido("#FFFFFF",OBJETOS.TESORO);
+    var wumpus = new Recorrido("#FFFFFF",OBJETOS.WUMPUS);
     var entrada_1 = new Recorrido("#58D3F7",OBJETOS.ENTRADA_1);
     var entrada_2 = new Recorrido("#2E64FE",OBJETOS.ENTRADA_2);
-    var vacio = new Recorrido("#F2F2F2",OBJETOS.VACIO);
-    var oscuro = new Recorrido("#F2F2F2",OBJETOS.OSCURO);
+    var vacio = new Recorrido("#FFFFFF",OBJETOS.VACIO);
+    var oscuro = new Recorrido("#FFFFFF",OBJETOS.OSCURO);
 	var viento = new Recorrido("#ffffff",OBJETOS.VIENTO);
-	var olor = new Recorrido("#F2F2F2",OBJETOS.OLOR);
-	var brillo = new Recorrido("#F2F2F2", OBJETOS.BRILLO);
+	var olor = new Recorrido("#FFFFFF",OBJETOS.OLOR);
+	var brillo = new Recorrido("#FFFFFF", OBJETOS.BRILLO);
     
     //color: especifica el color que va a tener de fondo
     //miPosicion: indica que tipo de objeto utilizara del Enum de Objeto
@@ -394,7 +394,7 @@ function Run(){
     
     function figureEdor(){
         this.stickFigure = new Image();
-		this.stickFigure.src = "img/Humo.gif";
+		this.stickFigure.src = "img/images.jpeg";
         
         this.renderEntity = function()
         {
@@ -407,7 +407,12 @@ function Run(){
                     }
                     else{
                         x = 0;
-                    }        			 
+                    }
+                    
+                    $('canvas').drawImage({
+                      source: this.stickFigure.src,
+                      x: x, y: y
+                    });  			 
                 }
                  
             }            
@@ -474,7 +479,7 @@ function Run(){
                             this.validMove = true;
                         }
                         intentsCount++;
-                        sleep(5);                        
+                        sleep(50);                        
                    }
 				   
                    
@@ -499,16 +504,29 @@ function Run(){
                    else if(mapaTablero.mapa[currentIndex]==olor){
                        
                        var posToShot = makeDecition(currentIndex);
+                       if(stick.estado.tieneFlecha && decideToShot()){
                        if(mapaTablero.mapa[posToShot] == wumpus){
-                           if(stick.estado.tieneFlecha && decideToShot()){
+                           
                                WumpuStick.estado.tieneVida = false;
-                               stick.estado.tieneFlecha = false;
+                               
                            }
+                           stick.estado.tieneFlecha = false;
                        }
                    }
                    else{
                        mapaTablero.mapa[currentIndex] = aventurero;
                    }                  
+
+
+                   var posOponent = checkForOponent(oponente,currentIndex);
+                   if(posOponent>-1){
+                       if(mapaTablero.mapa[posOponent] == oponente){
+                           if(stick.estado.tieneFlecha && decideToShot()){
+                               stick2.estado.tieneVida = false;
+                               stick.estado.tieneFlecha = false;
+                           }
+                       }
+                   }
 
 
                    posAvent1_Y = Math.floor(currentIndex/alto) * 64;
@@ -527,6 +545,7 @@ function Run(){
 				   
 				   render();
                    stick.renderEntity();
+                   stick2.renderEntity();
                    treasureStick.renderEntity();
                    WumpuStick.renderEntity();
 				   humoStick.renderEntity();
@@ -554,7 +573,7 @@ function Run(){
                             this.validMove = true;
                         }
                         intentsCount++;
-                        sleep(5);
+                        sleep(50);
                         
                    }
 				   
@@ -580,17 +599,28 @@ function Run(){
                    else if(mapaTablero.mapa[currentIndex2]==olor){
                       
                        var posToShot = makeDecition(currentIndex2);
-                       if(mapaTablero.mapa[posToShot] == wumpus){
+                       
                            if(stick2.estado.tieneFlecha && decideToShot()){
+                               if(mapaTablero.mapa[posToShot] == wumpus){
                                WumpuStick.estado.tieneVida = false;
-                               stick2.estado.tieneFlecha = false;
+                               
                            }
+                           stick2.estado.tieneFlecha = false;
                        }
                    }
                    else{
                        mapaTablero.mapa[currentIndex2] = oponente;
                    }
                    
+                   var posOponent = checkForOponent(aventurero,currentIndex2);
+                   if(posOponent>-1){
+                       if(mapaTablero.mapa[posOponent] == aventurero){
+                           if(stick2.estado.tieneFlecha && decideToShot()){
+                               stick.estado.tieneVida = false;
+                               stick2.estado.tieneFlecha = false;
+                           }
+                       }
+                   }
                    
                    
 
@@ -610,6 +640,7 @@ function Run(){
 				   
 				           render();
                    stick2.renderEntity();
+                   stick.renderEntity();
                    treasureStick.renderEntity();
                    WumpuStick.renderEntity();
 				   humoStick.renderEntity();
@@ -710,31 +741,56 @@ function Run(){
     }
     
     //Verifica si tiene en horizontal o vertical al oponente
-    function checkForOponent(){
+    function checkForOponent(contri,current){
+        
         var filaPista = parseInt(current/alto);
 		var columnaPista =  parseInt(current - parseInt(alto*(filaPista)));
-		var position = -1;       
+		      
    
         
         if(filaPista>0){
-			var row = (filaPista-1) * alto;
-			position = row + columnaPista;            
+			var row = (filaPista-1) * alto;            
+            for(var j= row; j>=0;j--){                
+                if(mapaTablero.mapa[j+columnaPista] == contri){
+                    return j+columnaPista;
+                }
+            }  
 		}
 				
 		if(columnaPista > 0 ){
-		      position = (filaPista * alto) + columnaPista -1;
+            var row = (filaPista*alto);
+            var colum = columnaPista-1;
+            for(var j = colum; j>=0; j--){
+                if(mapaTablero.mapa[j+row]==contri){
+                    return j+row;
+                }
+            }
+		      
 		}
 		
 		if(columnaPista < ancho-1){
-			position = (filaPista * alto) + columnaPista +1;
+			
+            var row = (filaPista*alto);
+            var colum = columnaPista+1;
+            for(var j=colum; j<=ancho;j++){
+                if(mapaTablero.mapa[row+j]==contri){
+                    return j+row;
+                }
+            }
             
 		}
 		
 		if(filaPista<alto-1){
 			var row = (filaPista+1) * alto;
-			position = row + columnaPista;            
+            for(var j = row; j<= alto;j++){
+                if(mapaTablero.mapa[j+columnaPista]==contri){
+                    return j+columnaPista;
+                }
+            }
 		}
-            
+        
+        
+        return -1;
     }
     
     
